@@ -33,6 +33,7 @@ public class Boss01 : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
+        planeSpawn.GetComponent<WouldSystem>().mobCount++;
         health = 100;
         mobSpeed = 5.0f;
         canMove = true;

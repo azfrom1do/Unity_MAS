@@ -24,6 +24,7 @@ public class mob03 : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
+        planeSpawn.GetComponent<WouldSystem>().mobCount++;
         health = 16;
         mobSpeed = 4.0f;
         canMove = true;

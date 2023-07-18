@@ -4,6 +4,40 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public class Item_EXPpotion{
+    private string name;
+    private int number;
+
+    public Item_EXPpotion(){
+        name = "";
+        number = 0;
+    }
+    public Item_EXPpotion(string str, int num){
+        name = str;
+        number = num;
+    }
+
+    public string getName(){
+        return name;
+    }
+}
+public class Item_List{
+    public Item_EXPpotion[] list = new Item_EXPpotion[5];
+
+    public Item_List(){
+        list[0] = new Item_EXPpotion("테스트아이템", 0);
+        list[1] = new Item_EXPpotion("경험치포션", 1);
+        list[2] = new Item_EXPpotion("생고기", 2);
+        list[3] = new Item_EXPpotion("녹슨갑옷", 3);
+        list[4] = new Item_EXPpotion("조제도구", 4);
+        list[5] = new Item_EXPpotion("은화", 5);
+    }
+
+    public string getItemName(int n){
+        return list[n].getName();
+    }
+}
+
 public class player : MonoBehaviour
 {
     Rigidbody rigid;
@@ -19,6 +53,16 @@ public class player : MonoBehaviour
     public GameObject potionHeal;
     public GameObject levelUp;
     public GameObject FB_Icon;
+    public GameObject stat1_Icon;
+    public GameObject stat2_Icon;
+    public GameObject stat3_Icon;
+    public GameObject statUp;
+    public GameObject[] item_GOlist;
+    public GameObject item_EXPpotion_Icon;      //아이콘 경험치포션
+    public GameObject item_RawMeat_Icon;        //아이콘 생고기
+    public GameObject item_RustyArmor_Icon;     //아이콘 녹슨갑옷
+    public GameObject item_PotionTool_Icon;     //아이콘 생고기
+    public GameObject item_InvisiCloak_Icon;    //아이콘 생고기
 
     AudioSource audioSource;
     public AudioClip audioSwing1;
@@ -44,13 +88,17 @@ public class player : MonoBehaviour
     public float dodgeCT;
     private bool canAttack = true;
     public bool immune = false;
-    public int potionCount = 3;
+    public float getHit_Immune;
+    public int needPotion;
+    public int potionCount;
     private bool canPotion = true;
     private bool canSkill = true;
     public bool getHit_bossSkill;
 
     public int score;
     public int killScore;
+    public int itemPoint;
+    public int[] item_Array;
     public int skillPoint;
     public int AD;
     public int FB_Level;
@@ -82,6 +130,19 @@ public class player : MonoBehaviour
 
         //오디오소스 호출
         audioSource = GetComponent<AudioSource>();
+
+        //아이템
+        item_Array = new int[3];
+        item_GOlist = new GameObject[]{
+            item_EXPpotion_Icon,
+            item_RawMeat_Icon,
+            item_RustyArmor_Icon,
+            item_PotionTool_Icon,
+            item_InvisiCloak_Icon
+        };
+        potionCount = 5;
+        needPotion = 5;
+        getHit_Immune = 1.0f;
     }
     
     void FixedUpdate()
@@ -110,10 +171,6 @@ public class player : MonoBehaviour
         StatusCheck ();
         systemCheck ();
 
-        //스킬
-        potion ();
-        FireBall();
-
         //보스전용코드
         GetHit_to_bossSkill();
     }
@@ -125,6 +182,16 @@ public class player : MonoBehaviour
     private void OnCollisionStay(Collision col)
     {
         PlayerHit(col);
+    }
+
+    void Update(){
+        //스킬
+        potion ();      //포션
+        FireBall();     //화염구
+
+        //선택
+        SkillSelect();  //스킬선택
+        ItemSelect ();  //유물선택
     }
     
     
@@ -143,7 +210,7 @@ public class player : MonoBehaviour
         hearthText.text = 
             "Level : "+ level + 
             "\nHealth : " + health + 
-            "\nPotion (" + potionCount + "/3)";
+            "\nPotion (" + potionCount + "/" + needPotion + ")";
         if(health <= 0){
             hearthText.text = "GAME OVER";
         }
@@ -156,7 +223,6 @@ public class player : MonoBehaviour
             score += 10;
             LevelUp ();
         }
-        SkillSelect();
 
         //무기공격력에 레벨만큼 추가
         weapon.GetComponent<weaponAttack>().damage = (AD + 1);
@@ -238,7 +304,7 @@ public class player : MonoBehaviour
             //rigid.AddForce(Vector3.back * 20, ForceMode.Impulse);
             if(!immune){
                 health--;
-                Immune(1.0f);
+                Immune(getHit_Immune);
                 Invoke("PlayerHitOut", 0.3f);
 
                 anim.SetBool("GetHit", true);
@@ -326,17 +392,17 @@ public class player : MonoBehaviour
 
     //피해면역
     private void Immune (float timer) {
-        if(!immune) immune = true;
-
-        Invoke("ImmuneOut", timer);
-        //Invoke("ImmuneOut", 0.3f);
+        if(!immune) {
+            immune = true;
+            Invoke("ImmuneOut", timer);
+        }
     }
     private void ImmuneOut () {
         immune = false;
     }
 
     //레벨
-    private void LevelUp () {
+    public void LevelUp () {
         level++;
         Instantiate(levelUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
 
@@ -344,33 +410,161 @@ public class player : MonoBehaviour
     }
     private void SkillSelect () {
         if(skillPoint > 0){
-            if(Input.GetKey("1")) {
+            stat1_Icon.SetActive(true);
+            stat2_Icon.SetActive(true);
+            stat3_Icon.SetActive(true);
+            if(Input.GetKeyDown("1")) {
                 skillPoint--;
                 maxHealth++;
                 health++;
                 AD++;
+                Instantiate(statUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
                 
+                stat2_Icon.SetActive(false);
+                stat3_Icon.SetActive(false);
+                Invoke("SkillSelectOut", 1.0f);
                 Debug.Log("스텟 증가");
             }
-            if(Input.GetKey("2")) {
+            if(Input.GetKeyDown("2")) {
                 skillPoint--;
                 FB_Level++;
                 
                 FB_Icon.SetActive(true);    //스킬 획득시 아이콘 표시
+                stat1_Icon.SetActive(false);
+                stat3_Icon.SetActive(false);
+                Invoke("SkillSelectOut", 1.0f);
                 Debug.Log("화염구 강화");
             }
-            if(Input.GetKey("3")) {
-                maxHealth++;
-                AD++;
+            if(Input.GetKeyDown("3")) {
                 skillPoint--;
-                Debug.Log("스텟증가");
+
+                stat1_Icon.SetActive(false);
+                stat2_Icon.SetActive(false);
+                Invoke("SkillSelectOut", 1.0f);
+                Debug.Log("보상미정");
             }
         }
     }
+    private void SkillSelectOut () {
+        stat1_Icon.SetActive(false);
+        stat2_Icon.SetActive(false);
+        stat3_Icon.SetActive(false);
+    }
 
-    //아이템_포션
+    //아이템
+    private void ItemSelect() {
+        if (itemPoint > 0 && skillPoint == 0) {
+            List<int> indexList = new List<int>() { 0, 1, 2, 3, 4 }; // 아이템 인덱스 후보 리스트
+
+            if(item_Array[0] == 0){
+                for (int i = 0; i < 3; i++){
+                    int randomIndex = Random.Range(0, indexList.Count); // 후보 리스트에서 무작위 인덱스 선택
+                    item_Array[i] = indexList[randomIndex]; // 선택된 인덱스를 결과 배열에 할당
+                    indexList.RemoveAt(randomIndex); // 이미 선택된 인덱스는 후보 리스트에서 제거
+
+                    Debug.Log(item_Array[i]);
+
+                    item_GOlist[item_Array[i]].transform.position = 
+                        new Vector3(item_GOlist[item_Array[i]].transform.position.x + (100 * i), item_GOlist[item_Array[i]].transform.position.y);
+                    item_GOlist[item_Array[i]].SetActive(true);
+                }
+            }
+        
+            if(Input.GetKeyDown("1")) ItemList(item_Array[0]);
+            if(Input.GetKeyDown("2")) ItemList(item_Array[1]);
+            if(Input.GetKeyDown("3")) ItemList(item_Array[2]);
+        }
+        
+    }
+    private void ItemSelectIcon(int i, int k) {
+        i-=1;
+        item_GOlist[i].transform.position = new Vector3(item_GOlist[i].transform.position.x + (100 * k), 
+            item_GOlist[i].transform.position.y); item_GOlist[i].SetActive(true);
+    }
+    private void ItemList (int num) {
+        Debug.Log(num+"호출");
+        switch (num) {
+            case 0:
+                //경험치포션
+                //즉시 레벨업 2번
+                LevelUp();
+                Invoke("LevelUp", 0.3f);
+                
+                Debug.Log("경험치포션 선택");
+                item_GOlist[1].SetActive(false);
+                item_GOlist[2].SetActive(false);
+                item_GOlist[3].SetActive(false);
+                item_GOlist[4].SetActive(false);
+                break;
+            case 1:
+                //생고기
+                //최대체력+2
+                //풀힐
+                maxHealth += 2;
+                health = maxHealth;
+
+                Debug.Log("생고기 선택");
+                item_GOlist[0].SetActive(false);
+                item_GOlist[2].SetActive(false);
+                item_GOlist[3].SetActive(false);
+                item_GOlist[4].SetActive(false);
+                break;
+            case 2:
+                //녹슨갑옷
+                //최대체력+5
+                //10초 무적
+                maxHealth += 5;
+                Immune(10.0f);
+
+                Debug.Log("녹슨갑옷 선택");
+                item_GOlist[0].SetActive(false);
+                item_GOlist[1].SetActive(false);
+                item_GOlist[3].SetActive(false);
+                item_GOlist[4].SetActive(false);
+                break;
+            case 3:
+                //조제도구
+                //포션획득 필요수-1
+                needPotion -= 1;
+
+                Debug.Log("조제도구 선택");
+                item_GOlist[0].SetActive(false);
+                item_GOlist[1].SetActive(false);
+                item_GOlist[2].SetActive(false);
+                item_GOlist[4].SetActive(false);
+                break;
+            case 4:
+                //투명망토 
+                //피격후 1초간 무적
+                getHit_Immune = 2.0f;
+
+                Debug.Log("투명망토  선택");
+                item_GOlist[0].SetActive(false);
+                item_GOlist[1].SetActive(false);
+                item_GOlist[2].SetActive(false);
+                item_GOlist[3].SetActive(false);
+                break;
+            default :
+                break;
+        }
+        itemPoint--;
+        Invoke("ItemListOut", 1.0f);
+    }
+    private void ItemListOut () {
+        item_GOlist[0].SetActive(false);
+        item_GOlist[1].SetActive(false);
+        item_GOlist[2].SetActive(false);
+        item_GOlist[3].SetActive(false);
+        item_GOlist[4].SetActive(false);
+        item_GOlist[item_Array[1]].transform.position = 
+            new Vector3(item_GOlist[item_Array[1]].transform.position.x -100, item_GOlist[item_Array[1]].transform.position.y);
+        item_GOlist[item_Array[2]].transform.position = 
+            new Vector3(item_GOlist[item_Array[2]].transform.position.x -200, item_GOlist[item_Array[2]].transform.position.y);
+        item_Array[0] = 0;
+    }
     private void potion () {
-        if(Input.GetKey("q") && potionCount >= 3 && health < maxHealth && canAction){
+        if(Input.GetKeyDown("q") && potionCount >= needPotion && health < maxHealth && canAction){
+            potionCount -= needPotion;
             canPotion = false;
             Invoke("potionOut", 1.0f);
             Instantiate(potionReady, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
@@ -380,7 +574,6 @@ public class player : MonoBehaviour
     }
     private void potionOut () {
         health++;
-        potionCount -= 3;
         canPotion = true;
         Instantiate(potionHeal, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
 
@@ -391,7 +584,7 @@ public class player : MonoBehaviour
     //화염구
     private void FireBall () {
         //moveDirection
-        if(Input.GetKey("e") && FB_Level > 0 && canAction){
+        if(Input.GetKeyDown("e") && FB_Level > 0 && canAction){
             canSkill = false;
             Instantiate(fireBall, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
             Invoke("FireBallOut", 0.3f);

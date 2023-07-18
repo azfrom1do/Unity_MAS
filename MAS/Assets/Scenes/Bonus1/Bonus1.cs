@@ -62,9 +62,9 @@ public class Bonus1 : MonoBehaviour
     }
 
     private void Die () {
-        planeSpawn.GetComponent<WouldSystem>().mobCount--;
         player.GetComponent<player>().killScore++;
         player.GetComponent<player>().potionCount++;
+        player.GetComponent<player>().itemPoint++;
         Destroy(this.gameObject);
     }
 }
