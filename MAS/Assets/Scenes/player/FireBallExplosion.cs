@@ -14,8 +14,12 @@ public class FireBallExplosion : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindWithTag("Player");
-        damage = 3 + player.GetComponent<player>().level;
+        damage = 4;
+        if(player.GetComponent<player>().FB_Level >= 2) damage += player.GetComponent<player>().level;
         maintain = 1.5f;
+        
+        Debug.Log(player.GetComponent<player>().FB_Level + "레벨 염구 폭발");
+
 
         //audioSource.Play();
     }
@@ -88,6 +92,11 @@ public class FireBallExplosion : MonoBehaviour
             //     col.GetComponent<mob05>().getHit = true;
             //     col.GetComponent<mob05>().health -= damage;
             // }
+        }
+        if(col.gameObject.tag == "Bonus"){
+            if(col.gameObject.name == "Bonus1(Clone)"){
+                col.GetComponent<Bonus1>().health -= 1;
+            }
         }
     }
     private void DestroyCheck () {

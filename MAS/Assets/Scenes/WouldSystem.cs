@@ -34,6 +34,7 @@ public class WouldSystem : MonoBehaviour
     public GameObject prefabMob04;
     public GameObject prefabMob05;
 
+    public GameObject prefabBonus1;
     public GameObject prefabBoss01;
 
     public float sunTimeSpeed;
@@ -73,7 +74,7 @@ public class WouldSystem : MonoBehaviour
     }
 
     private void Awake(){
-        //Instantiate(prefabBoss01, new Vector3(0, 1.5f, -20), Quaternion.identity);
+        Instantiate(prefabBonus1, new Vector3(0, 1.5f, -20), Quaternion.identity);
         //Instantiate(prefabMob2, new Vector3(0, 1.5f, -20), Quaternion.identity);
     }
     void Update()
@@ -127,7 +128,9 @@ public class WouldSystem : MonoBehaviour
         if(systemTime * sunTimeSpeed >= 360) {
             systemDay++;
             systemTime = 0;
-            prefabPlayer.GetComponent<player>().level += 1;
+
+            //하루가 끝나면 레벨업
+            //prefabPlayer.GetComponent<player>().level += 1;
         }
     }
 
@@ -151,7 +154,7 @@ public class WouldSystem : MonoBehaviour
         if(randomVer >= 0) spawnVer = randomHor + prefabPlayer.transform.position.z + 20;
         else spawnVer = randomVer + prefabPlayer.transform.position.z - 20;
 
-        if(canSpawn){
+        if(!canSpawn){
             if(spawnIntTimer == 1 && !nightBool && systemDay == 3)  Instantiate(prefabBoss01, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
 
             if((spawnIntTimer % spawnInterval_day0) == 0 && !nightBool)                     Instantiate(prefabMob0, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);

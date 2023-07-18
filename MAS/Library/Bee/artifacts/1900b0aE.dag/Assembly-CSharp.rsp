@@ -386,6 +386,7 @@
 "Assets/Player Pack/SuperCharacterController/Code/Examples/SimpleStateMachine.cs"
 "Assets/Player Pack/SuperCharacterController/Code/Math3d.cs"
 "Assets/QuarterView/ReadMe/Scripts/ReadmeBE5.cs"
+"Assets/Scenes/Bonus1/Bonus1.cs"
 "Assets/Scenes/Boss01/Boss01.cs"
 "Assets/Scenes/Boss01/Boss01IceLance.cs"
 "Assets/Scenes/Mob0/mob0.cs"
@@ -405,10 +406,11 @@
 "Assets/Scenes/player/FireBallExplosion.cs"
 "Assets/Scenes/player/Heal.cs"
 "Assets/Scenes/player/HealReady.cs"
+"Assets/Scenes/player/LevelUp.cs"
 "Assets/Scenes/player/player.cs"
 "Assets/Scenes/player/weaponAttack.cs"
 "Assets/Scenes/WouldSystem.cs"
-"Assets/Travis Game Assets/Status Effects/Demo Scene/Scripts/StatusEffectsPreview.cs"
+"Assets/Skill Effect/Status Effects/Demo Scene/Scripts/StatusEffectsPreview.cs"
 -langversion:9.0
 
 /deterministic

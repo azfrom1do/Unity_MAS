@@ -85,6 +85,11 @@ public class weaponAttack : MonoBehaviour
             //     col.GetComponent<mob05>().health -= damage;
             // }
         }
+        if(col.gameObject.tag == "Bonus"){
+            if(col.gameObject.name == "Bonus1(Clone)"){
+                col.GetComponent<Bonus1>().health -= 1;
+            }
+        }
     }
 
     //활성화

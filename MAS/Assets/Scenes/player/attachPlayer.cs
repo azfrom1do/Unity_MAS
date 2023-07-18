@@ -4,6 +4,27 @@ using UnityEngine;
 
 public class attachPlayer : MonoBehaviour
 {
+    public bool cameraPos;
+    void FixedUpdate()
+    {
+        if(Input.GetKeyDown("t")){
+            if(!cameraPos) transform.Translate(new Vector3(0, 1.0f, -8.0f), Space.Self);
+            if(cameraPos) transform.Translate(new Vector3(0, -1.0f, 8.0f), Space.Self);
+            cameraPos = !cameraPos;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     // public GameObject playerPos;
 
     // private float xRotate, yRotate, xRotateMove, yRotateMove;

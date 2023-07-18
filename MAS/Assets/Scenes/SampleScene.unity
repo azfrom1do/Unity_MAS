@@ -474,6 +474,7 @@ MonoBehaviour:
   prefabMob03: {fileID: 9159223839870178249, guid: d86571122253379429af2efeb59648af, type: 3}
   prefabMob04: {fileID: 9159223839870178249, guid: d86571122253379429af2efeb59648af, type: 3}
   prefabMob05: {fileID: 0}
+  prefabBonus1: {fileID: 5060274552871017780, guid: 5b277918ac4df7f419171e2b267b5857, type: 3}
   prefabBoss01: {fileID: 397145922677965443, guid: 5d83a3458034bfe4bbf44b1a80780025, type: 3}
   sunTimeSpeed: 10
   mobCount: 0
@@ -589,6 +590,82 @@ BoxCollider:
   m_CorrespondingSourceObject: {fileID: 8829987775046802091, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
   m_PrefabInstance: {fileID: 8829987775368044516}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &860581488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 860581489}
+  - component: {fileID: 860581491}
+  - component: {fileID: 860581490}
+  m_Layer: 5
+  m_Name: FireBall_icon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &860581489
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860581488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 934934150}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -400, y: -150}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &860581490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860581488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 9f69b220176e6964fbd87f5f158d45e3, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &860581491
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860581488}
+  m_CullTransparentMesh: 1
 --- !u!1 &934934146
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,6 +762,7 @@ RectTransform:
   m_Children:
   - {fileID: 1136034639}
   - {fileID: 1472998001}
+  - {fileID: 860581489}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -703,6 +781,7 @@ GameObject:
   m_Component:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
+  - component: {fileID: 963194229}
   - component: {fileID: 963194226}
   m_Layer: 0
   m_Name: Main Camera
@@ -785,6 +864,19 @@ Transform:
   m_Father: {fileID: 340184036}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c9177c1709fcc4db4ad18705ca8a7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraPos: 0
 --- !u!1 &1058194644
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,6 +1888,18 @@ PrefabInstance:
       propertyPath: weapon
       value: 
       objectReference: {fileID: 1283471897}
+    - target: {fileID: 8829987775162635269, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: FB_Icon
+      value: 
+      objectReference: {fileID: 860581488}
+    - target: {fileID: 8829987775162635269, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: FB_icon
+      value: 
+      objectReference: {fileID: 860581490}
+    - target: {fileID: 8829987775162635269, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: levelUp
+      value: 
+      objectReference: {fileID: 4837465735841053480, guid: 0975a3cbf91f8f545a5e6b30666233a8, type: 3}
     - target: {fileID: 8829987775162635269, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: fireBall
       value: 

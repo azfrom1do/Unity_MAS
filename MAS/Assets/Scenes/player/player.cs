@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class player : MonoBehaviour
@@ -16,6 +17,8 @@ public class player : MonoBehaviour
     public GameObject fireBall;
     public GameObject potionReady;
     public GameObject potionHeal;
+    public GameObject levelUp;
+    public GameObject FB_Icon;
 
     AudioSource audioSource;
     public AudioClip audioSwing1;
@@ -28,7 +31,7 @@ public class player : MonoBehaviour
     public Vector3 moveDirection;
     Vector3 targetDirection;
     public int level;
-    private int maxHealth;
+    public int maxHealth;
     public int health;
     public float playerSpeed;
     private bool doMove = false;
@@ -48,6 +51,9 @@ public class player : MonoBehaviour
 
     public int score;
     public int killScore;
+    public int skillPoint;
+    public int AD;
+    public int FB_Level;
 
     public float rotateSpeed;
     public Vector3 cameraRotate;
@@ -65,7 +71,7 @@ public class player : MonoBehaviour
 
         //어째서인지 여기에도 초기화를 해줘야 전달이 됨
         level = 1;
-        maxHealth = 2 + level;;
+        maxHealth = 3;;
         health = maxHealth;     //체력
         playerSpeed = 10;     //이동속도
         jumpPower = 5;  //점프력
@@ -74,6 +80,7 @@ public class player : MonoBehaviour
         dodgeSpeed = 0; //회피속도
         dodgeCT = 2;    //쿨타임
 
+        //오디오소스 호출
         audioSource = GetComponent<AudioSource>();
     }
     
@@ -120,6 +127,7 @@ public class player : MonoBehaviour
         PlayerHit(col);
     }
     
+    
 
 
 
@@ -130,8 +138,8 @@ public class player : MonoBehaviour
 
     //스테이터스UI + 체력관리
     private void StatusCheck () {
-        maxHealth = 2 + level;
-        weapon.GetComponent<weaponAttack>().damage = level;
+        //최대체력 설정 (레벨만큼 추가)
+        
         hearthText.text = 
             "Level : "+ level + 
             "\nHealth : " + health + 
@@ -140,15 +148,26 @@ public class player : MonoBehaviour
             hearthText.text = "GAME OVER";
         }
 
-        canAction = (canJump && canDodge  && canAttack && canPotion && canSkill);   //행동 가능 상태
+        //행동 가능 상태
+        canAction = (canJump && canDodge  && canAttack && canPotion && canSkill);
+
+        if(killScore >= 10) {
+            killScore -= 10;
+            score += 10;
+            LevelUp ();
+        }
+        SkillSelect();
+
+        //무기공격력에 레벨만큼 추가
+        weapon.GetComponent<weaponAttack>().damage = (AD + 1);
     }
     //시스템UI
     private void systemCheck () {
         score = (level-1) * 10;
         scoreText.text = 
-            "Score = " + (killScore + score) + 
+            "Score = " + (score + killScore) + 
             "\nDay = " + (level-1) + 
-            "\nKill Score = " + killScore;
+            "\nEXP = " + killScore;
     }
 
     //이동
@@ -219,8 +238,7 @@ public class player : MonoBehaviour
             //rigid.AddForce(Vector3.back * 20, ForceMode.Impulse);
             if(!immune){
                 health--;
-                Immune();
-                Invoke("ImmuneOut", 1f);
+                Immune(1.0f);
                 Invoke("PlayerHitOut", 0.3f);
 
                 anim.SetBool("GetHit", true);
@@ -236,8 +254,7 @@ public class player : MonoBehaviour
             getHit_bossSkill = false;
             if(!immune){
                 health--;
-                Immune();
-                Invoke("ImmuneOut", 1f);
+                Immune(1.0f);
                 Invoke("PlayerHitOut", 0.3f);
 
                 anim.SetBool("GetHit", true);
@@ -268,8 +285,7 @@ public class player : MonoBehaviour
             Debug.Log("회피");
             canDodge = false;
             dodgeCool = false;
-            Immune();
-            Invoke("ImmuneOut", 0.3f);
+            Immune(0.3f);
             Invoke("DodgeOut", 0.2f);
             Invoke("DodgeReady", dodgeCT);
 
@@ -309,8 +325,10 @@ public class player : MonoBehaviour
     }
 
     //피해면역
-    private void Immune () {
-        immune = true;
+    private void Immune (float timer) {
+        if(!immune) immune = true;
+
+        Invoke("ImmuneOut", timer);
         //Invoke("ImmuneOut", 0.3f);
     }
     private void ImmuneOut () {
@@ -320,14 +338,42 @@ public class player : MonoBehaviour
     //레벨
     private void LevelUp () {
         level++;
+        Instantiate(levelUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
+
+        skillPoint++;
+    }
+    private void SkillSelect () {
+        if(skillPoint > 0){
+            if(Input.GetKey("1")) {
+                skillPoint--;
+                maxHealth++;
+                health++;
+                AD++;
+                
+                Debug.Log("스텟 증가");
+            }
+            if(Input.GetKey("2")) {
+                skillPoint--;
+                FB_Level++;
+                
+                FB_Icon.SetActive(true);    //스킬 획득시 아이콘 표시
+                Debug.Log("화염구 강화");
+            }
+            if(Input.GetKey("3")) {
+                maxHealth++;
+                AD++;
+                skillPoint--;
+                Debug.Log("스텟증가");
+            }
+        }
     }
 
     //아이템_포션
     private void potion () {
-        if(Input.GetKey("1") && potionCount >= 3 && health < maxHealth && canAction){
+        if(Input.GetKey("q") && potionCount >= 3 && health < maxHealth && canAction){
             canPotion = false;
             Invoke("potionOut", 1.0f);
-            Instantiate(potionReady, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
+            Instantiate(potionReady, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
 
             anim.SetBool("Potion", true);
         }
@@ -345,7 +391,7 @@ public class player : MonoBehaviour
     //화염구
     private void FireBall () {
         //moveDirection
-        if(Input.GetKey("2") && canAction){
+        if(Input.GetKey("e") && FB_Level > 0 && canAction){
             canSkill = false;
             Instantiate(fireBall, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
             Invoke("FireBallOut", 0.3f);

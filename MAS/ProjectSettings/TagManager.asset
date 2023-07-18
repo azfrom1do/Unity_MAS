@@ -9,6 +9,7 @@ TagManager:
   - Floor
   - Weapon
   - Mob_Skill
+  - Bonus
   layers:
   - Default
   - TransparentFX
