@@ -29,7 +29,7 @@ public class mob02 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
-        health = 5;
+        health = 11;
         mobSpeed = 1.5f;
         canMove = true;
 
@@ -61,7 +61,7 @@ public class mob02 : MonoBehaviour
             health = 1;
             anim.SetTrigger("doDie");
             mobSpeed = 0;
-            Invoke("Die", 1f);
+            Invoke("Die", 1);
         }
     }
 
@@ -130,7 +130,7 @@ public class mob02 : MonoBehaviour
 
     //몹 고유 스킬  mobSpeed
     private void JumpReady () {
-        if(jumpingCool >= 5.0f){
+        if(jumpingCool >= 3.0f){
             jumpingCool = 0.0f;
             Invoke("Jump", 0.5f);
 

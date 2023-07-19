@@ -52,6 +52,9 @@ public class player : MonoBehaviour
     public GameObject potionReady;
     public GameObject potionHeal;
     public GameObject levelUp;
+    public GameObject select1_Icon;
+    public GameObject select2_Icon;
+    public GameObject select3_Icon;
     public GameObject FB_Icon;
     public GameObject stat1_Icon;
     public GameObject stat2_Icon;
@@ -97,6 +100,7 @@ public class player : MonoBehaviour
 
     public int score;
     public int killScore;
+    private bool canSelect;
     public int itemPoint;
     public int[] item_Array;
     public int skillPoint;
@@ -113,7 +117,7 @@ public class player : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
 
         //감도조정과 마우스 고정
-        rotateSpeed = 50.0f;    //감도
+        rotateSpeed = 30.0f;    //감도
         Cursor.lockState = CursorLockMode.Locked;       //마우스가 화면내 못나가게 + 숨기기
         //Cursor.lockState = CursorLockMode.Confined;     //마우스가 윈도우 밖으로 못나가게
 
@@ -143,6 +147,7 @@ public class player : MonoBehaviour
         potionCount = 5;
         needPotion = 5;
         getHit_Immune = 1.0f;
+        canSelect = true;
     }
     
     void FixedUpdate()
@@ -209,7 +214,8 @@ public class player : MonoBehaviour
         
         hearthText.text = 
             "Level : "+ level + 
-            "\nHealth : " + health + 
+            "\nHealth (" + health + "/" + maxHealth + ")" + 
+            "\nAttack Damage : " + (1 + AD) + 
             "\nPotion (" + potionCount + "/" + needPotion + ")";
         if(health <= 0){
             hearthText.text = "GAME OVER";
@@ -218,8 +224,8 @@ public class player : MonoBehaviour
         //행동 가능 상태
         canAction = (canJump && canDodge  && canAttack && canPotion && canSkill);
 
-        if(killScore >= 10) {
-            killScore -= 10;
+        if(killScore >= 15 + (level * 5)) {
+            killScore -= (15+ (level * 5));
             score += 10;
             LevelUp ();
         }
@@ -233,7 +239,7 @@ public class player : MonoBehaviour
         scoreText.text = 
             "Score = " + (score + killScore) + 
             "\nDay = " + (level-1) + 
-            "\nEXP = " + killScore;
+            "\nEXP = " + killScore + "/" + (15 + (level * 5));
     }
 
     //이동
@@ -409,7 +415,7 @@ public class player : MonoBehaviour
         skillPoint++;
     }
     private void SkillSelect () {
-        if(skillPoint > 0){
+        if(skillPoint > 0 && canSelect){
             stat1_Icon.SetActive(true);
             stat2_Icon.SetActive(true);
             stat3_Icon.SetActive(true);
@@ -443,6 +449,7 @@ public class player : MonoBehaviour
                 Invoke("SkillSelectOut", 1.0f);
                 Debug.Log("보상미정");
             }
+            SelectBool ();
         }
     }
     private void SkillSelectOut () {
@@ -450,10 +457,35 @@ public class player : MonoBehaviour
         stat2_Icon.SetActive(false);
         stat3_Icon.SetActive(false);
     }
+    private void SelectBool () {
+        if(canSelect){
+            if(Input.GetKeyDown("1")){
+                select1_Icon.SetActive(true);
+                canSelect = false;
+                Invoke("SelectBoolOut", 1.0f);
+            }
+            if(Input.GetKeyDown("2")){
+                select2_Icon.SetActive(true);
+                canSelect = false;
+                Invoke("SelectBoolOut", 1.0f);
+            }
+            if(Input.GetKeyDown("3")){
+                select3_Icon.SetActive(true);
+                canSelect = false;
+                Invoke("SelectBoolOut", 1.0f);
+            }
+        }
+    }
+    private void SelectBoolOut () {
+        canSelect = true;
+        select1_Icon.SetActive(false);
+        select2_Icon.SetActive(false);
+        select3_Icon.SetActive(false);
+    }
 
     //아이템
     private void ItemSelect() {
-        if (itemPoint > 0 && skillPoint == 0) {
+        if (itemPoint > 0 && skillPoint == 0 && canSelect) {
             List<int> indexList = new List<int>() { 0, 1, 2, 3, 4 }; // 아이템 인덱스 후보 리스트
 
             if(item_Array[0] == 0){
@@ -464,8 +496,9 @@ public class player : MonoBehaviour
 
                     Debug.Log(item_Array[i]);
 
-                    item_GOlist[item_Array[i]].transform.position = 
-                        new Vector3(item_GOlist[item_Array[i]].transform.position.x + (100 * i), item_GOlist[item_Array[i]].transform.position.y);
+                    if(i == 0) item_GOlist[item_Array[i]].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+                    if(i == 1) item_GOlist[item_Array[i]].transform.position = new Vector3(stat2_Icon.transform.position.x, stat2_Icon.transform.position.y);
+                    if(i == 2) item_GOlist[item_Array[i]].transform.position = new Vector3(stat3_Icon.transform.position.x, stat3_Icon.transform.position.y);
                     item_GOlist[item_Array[i]].SetActive(true);
                 }
             }
@@ -473,6 +506,8 @@ public class player : MonoBehaviour
             if(Input.GetKeyDown("1")) ItemList(item_Array[0]);
             if(Input.GetKeyDown("2")) ItemList(item_Array[1]);
             if(Input.GetKeyDown("3")) ItemList(item_Array[2]);
+
+            SelectBool ();
         }
         
     }
@@ -525,7 +560,7 @@ public class player : MonoBehaviour
             case 3:
                 //조제도구
                 //포션획득 필요수-1
-                needPotion -= 1;
+                if(needPotion > 1) needPotion -= 1;
 
                 Debug.Log("조제도구 선택");
                 item_GOlist[0].SetActive(false);
@@ -536,7 +571,7 @@ public class player : MonoBehaviour
             case 4:
                 //투명망토 
                 //피격후 1초간 무적
-                getHit_Immune = 2.0f;
+                getHit_Immune += 0.5f;
 
                 Debug.Log("투명망토  선택");
                 item_GOlist[0].SetActive(false);
@@ -556,10 +591,15 @@ public class player : MonoBehaviour
         item_GOlist[2].SetActive(false);
         item_GOlist[3].SetActive(false);
         item_GOlist[4].SetActive(false);
-        item_GOlist[item_Array[1]].transform.position = 
-            new Vector3(item_GOlist[item_Array[1]].transform.position.x -100, item_GOlist[item_Array[1]].transform.position.y);
-        item_GOlist[item_Array[2]].transform.position = 
-            new Vector3(item_GOlist[item_Array[2]].transform.position.x -200, item_GOlist[item_Array[2]].transform.position.y);
+        // item_GOlist[item_Array[1]].transform.position = 
+        //     new Vector3(item_GOlist[item_Array[1]].transform.position.x -100, item_GOlist[item_Array[1]].transform.position.y);
+        // item_GOlist[item_Array[2]].transform.position = 
+        //     new Vector3(item_GOlist[item_Array[2]].transform.position.x -200, item_GOlist[item_Array[2]].transform.position.y);
+        item_GOlist[0].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+        item_GOlist[1].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+        item_GOlist[2].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+        item_GOlist[3].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+        item_GOlist[4].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
         item_Array[0] = 0;
     }
     private void potion () {

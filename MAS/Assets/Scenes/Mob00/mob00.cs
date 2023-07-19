@@ -22,8 +22,8 @@ public class mob00 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
-        health = 5;
-        mobSpeed = 3.5f;
+        health = 11;
+        mobSpeed = 4.0f;
     }
 
     private void Update()
@@ -48,7 +48,7 @@ public class mob00 : MonoBehaviour
             health = 1;
             anim.SetTrigger("doDie");
             mobSpeed = 0;
-            Invoke("Die", 1f);
+            Invoke("Die", 1);
         }
     }
 

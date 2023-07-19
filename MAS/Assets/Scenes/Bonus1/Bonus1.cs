@@ -12,6 +12,7 @@ public class Bonus1 : MonoBehaviour
 
     public int health;
     public float mobSpeed;
+    public bool getHit = false;
 
     public float _distance;
     Rigidbody rigid;
@@ -36,12 +37,22 @@ public class Bonus1 : MonoBehaviour
 
     //체력관리
     private void HearthCheck () {
+        if(getHit){
+            mobSpeed = 20;
+            anim.SetBool("isHit", true);
+            Invoke("GetHitOut", 0.3f);
+        }
         if(health <= 0){
             health = 1;
             anim.SetTrigger("doDie");
             mobSpeed = 0;
             Invoke("Die", 1);
         }
+    }
+    private void GetHitOut () {
+        getHit=false;
+        mobSpeed = 8.0f;
+        anim.SetBool("isHit", false);
     }
 
     //몹 이동
@@ -57,6 +68,8 @@ public class Bonus1 : MonoBehaviour
             transform.position += direction * speed;
             transform.LookAt(transform.position + direction * speed);   //이동 방향 바라보게
             anim.SetBool("isRun", true);
+            if(getHit) transform.Translate(new Vector3(0, 0.05f, 0.1f), Space.Self);
+
         }
         else anim.SetBool("isRun", false);
     }

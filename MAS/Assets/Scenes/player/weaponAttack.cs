@@ -87,6 +87,7 @@ public class weaponAttack : MonoBehaviour
         }
         if(col.gameObject.tag == "Bonus"){
             if(col.gameObject.name == "Bonus1(Clone)"){
+                col.GetComponent<Bonus1>().getHit = true;
                 col.GetComponent<Bonus1>().health -= 1;
             }
         }

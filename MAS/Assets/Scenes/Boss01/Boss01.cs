@@ -78,6 +78,7 @@ public class Boss01 : MonoBehaviour
         if(getFireHit){
             getFireHit = false;
             mobSpeed = 0;
+            skillCool = 0;
             anim.SetBool("GetFireHit", true);
             Invoke("GetHitOut", 1.0f);
         }
@@ -163,8 +164,8 @@ public class Boss01 : MonoBehaviour
 
     //몹 고유 스킬
     private void Skill () {
-        if(skillCool >= 10.0f){
-            if(_distance >= 40) //플레이어와의 거리에 따라 다른 스킬 구사
+        if(skillCool >= 6.0f){
+            if(_distance >= 20) //플레이어와의 거리에 따라 다른 스킬 구사
                 FlyReady();
             else
                 Scream();
@@ -226,8 +227,8 @@ public class Boss01 : MonoBehaviour
         anim.SetTrigger("FlyReady");
     }
     private void IceLance () {
-        for(int i = 0; i < 100; i++) {
-            float randomFloat = Random.Range(0, 1.5f);
+        for(int i = 0; i < 10; i++) {
+            float randomFloat = Random.Range(0, 1.0f);
             Invoke("IceLanceRandomAngle", randomFloat);
         }
         skillCool = 0.0f;
@@ -235,10 +236,8 @@ public class Boss01 : MonoBehaviour
     }
     private void IceLanceRandomAngle () { //스킬 완전 종료
         skillCool = 0.0f;
-        float randomFloat = Random.Range(0, 330);
-        IceLanceRandomSpawn(iceLanceCount * 30 + randomFloat);
-        iceLanceCount++;
-        if(iceLanceCount >= 6) iceLanceCount = 0;
+        float randomFloat = Random.Range(-15, 15);
+        IceLanceRandomSpawn(randomFloat);
     }
     private void IceLanceRandomSpawn (float angle) { //스킬 완전 종료
         float rdFx = Random.Range(-4, 5);

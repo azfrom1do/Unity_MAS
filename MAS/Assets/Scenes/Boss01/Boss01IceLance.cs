@@ -15,7 +15,7 @@ public class Boss01IceLance : MonoBehaviour
 
     void Awake()
     {
-        maintain = 2.0f;
+        maintain = 3.0f;
 
         //audioSource.Play();
 

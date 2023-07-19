@@ -25,8 +25,8 @@ public class mob03 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
-        health = 16;
-        mobSpeed = 4.0f;
+        health = 50;
+        mobSpeed = 3.0f;
         canMove = true;
     }
 
@@ -54,7 +54,7 @@ public class mob03 : MonoBehaviour
             mobSpeed = 0;
 
             Instantiate(energyEffect, this.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
-            Invoke("Die", 3f);  //자폭 대기시간
+            Invoke("Die", 3);  //자폭 대기시간
         }
     }
 

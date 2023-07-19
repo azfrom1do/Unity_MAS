@@ -26,7 +26,7 @@ public class mob3 : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
         health = 1;
-        mobSpeed = 7.0f;
+        mobSpeed = 12.0f;
         canMove = true;
     }
 
@@ -54,7 +54,7 @@ public class mob3 : MonoBehaviour
             mobSpeed = 0;
 
             Instantiate(energyEffect, this.transform.position + new Vector3(0, 2, 0), Quaternion.identity);
-            Invoke("Die", 3f);  //자폭 대기시간
+            Invoke("Die", 3);  //자폭 대기시간
         }
     }
 

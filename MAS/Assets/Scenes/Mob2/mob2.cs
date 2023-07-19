@@ -29,7 +29,7 @@ public class mob2 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
-        health = 10;
+        health = 13;
         mobSpeed = 0.1f;
         canMove = true;
 
@@ -61,7 +61,7 @@ public class mob2 : MonoBehaviour
             health = 1;
             anim.SetTrigger("doDie");
             mobSpeed = 0;
-            Invoke("Die", 1f);
+            Invoke("Die", 1);
         }
     }
 
@@ -102,7 +102,7 @@ public class mob2 : MonoBehaviour
             Invoke("GetHit", 0.2f);
         }
         if(jumpingBool)
-        transform.Translate(new Vector3(0, 10.0f, 50.0f) * Time.deltaTime, Space.Self);
+        transform.Translate(new Vector3(0, 7.0f, 30.0f) * Time.deltaTime, Space.Self);
         
 
         //anim.SetBool("isWalk", true);
@@ -134,7 +134,7 @@ public class mob2 : MonoBehaviour
 
     //몹 고유 스킬  mobSpeed
     private void JumpReady () {
-        if(jumpingCool >= 7.0f){
+        if(jumpingCool >= 8.0f){
             jumpingCool = 0.0f;
             Invoke("Jump", 1.0f);
 
