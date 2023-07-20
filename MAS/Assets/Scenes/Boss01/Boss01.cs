@@ -165,7 +165,7 @@ public class Boss01 : MonoBehaviour
     //몹 고유 스킬
     private void Skill () {
         if(skillCool >= 6.0f){
-            if(_distance >= 20) //플레이어와의 거리에 따라 다른 스킬 구사
+            if(_distance >= 30) //플레이어와의 거리에 따라 다른 스킬 구사
                 FlyReady();
             else
                 Scream();

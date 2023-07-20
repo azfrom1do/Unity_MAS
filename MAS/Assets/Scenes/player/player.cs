@@ -82,6 +82,7 @@ public class player : MonoBehaviour
     public int health;
     public float playerSpeed;
     private bool doMove = false;
+    
     public bool canAction;
     private bool canJump;
     public float jumpPower;
@@ -110,7 +111,7 @@ public class player : MonoBehaviour
     public float rotateSpeed;
     public Vector3 cameraRotate;
     private float currentCameraRotationX;
-
+public bool wallBack;
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -183,6 +184,7 @@ public class player : MonoBehaviour
     private void OnCollisionEnter(Collision col)
     {
         JumpReset (col);    //바닥에 닿으면 다시 점프가 가능
+        WallBack(col);
     }
     private void OnCollisionStay(Collision col)
     {
@@ -249,10 +251,13 @@ public class player : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
 
         moveDirection = new Vector3(h, 0, v).normalized;
-        transform.Translate(moveDirection * speed, Space.Self);
+        if(!wallBack) transform.Translate(moveDirection * speed, Space.Self);
+        else transform.Translate(moveDirection * speed * (-1), Space.Self);
         //rigid.MovePosition(transform.position + moveDirection * speed * Time.deltaTime);    //위랑 비슷함
 
         //transform.LookAt(moveDirection);   //이동 방향 바라보게
+
+        wallBack = false;
     }
     private void Walking () {
         //moveDirection
@@ -300,8 +305,10 @@ public class player : MonoBehaviour
         mainCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f);
         // 좌우로 움직이면 안되므로 0f값을 줘서 고정시키기
     }
-
-
+    private void WallBack (Collision col) {
+        if(col.gameObject.tag == "Wall") wallBack = true;
+        else wallBack = false;
+    }
     
     //피격
     private void PlayerHit (Collision col) {
@@ -571,7 +578,7 @@ public class player : MonoBehaviour
             case 4:
                 //투명망토 
                 //피격후 1초간 무적
-                getHit_Immune += 0.5f;
+                getHit_Immune += 1.0f;
 
                 Debug.Log("투명망토  선택");
                 item_GOlist[0].SetActive(false);

@@ -34,6 +34,10 @@ public class weaponAttack : MonoBehaviour
                 col.GetComponent<Boss01>().getHit = true;
                 col.GetComponent<Boss01>().health -= 1;
             }
+            if(col.gameObject.name == "Execut(Clone)"){
+                col.GetComponent<Execut>().getHit = true;
+                col.GetComponent<Execut>().health -= damage;
+            }
             
             if(col.gameObject.name == "Mob0(Clone)"){
                 col.GetComponent<mob0>().getHit = true;

@@ -14,7 +14,7 @@ public class FireBallExplosion : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindWithTag("Player");
-        damage = 4;
+        damage = 5;
         if(player.GetComponent<player>().FB_Level >= 2) damage += player.GetComponent<player>().level;
         maintain = 1.5f;
         
@@ -41,6 +41,10 @@ public class FireBallExplosion : MonoBehaviour
             if(col.gameObject.name == "Boss01(Clone)"){
                 col.GetComponent<Boss01>().getFireHit = true;
                 col.GetComponent<Boss01>().health -= 10;
+            }
+            if(col.gameObject.name == "Execut(Clone)"){
+                col.GetComponent<Execut>().getHit = true;
+                col.GetComponent<Execut>().health -= damage;
             }
 
             if(col.gameObject.name == "Mob0(Clone)"){

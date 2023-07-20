@@ -10,6 +10,7 @@ TagManager:
   - Weapon
   - Mob_Skill
   - Bonus
+  - Wall
   layers:
   - Default
   - TransparentFX
