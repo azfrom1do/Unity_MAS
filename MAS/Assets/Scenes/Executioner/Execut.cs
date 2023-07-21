@@ -62,7 +62,7 @@ public class Execut : MonoBehaviour
             anim.SetBool("isAttack", true);
             Invoke("PlayerAttackOut", 1.0f);
 
-            player.GetComponent<player>().health--;
+            player.GetComponent<player>().health -= 2;
         }
     }
     private void PlayerAttackOut () {

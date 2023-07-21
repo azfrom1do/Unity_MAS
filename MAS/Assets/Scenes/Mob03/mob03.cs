@@ -65,6 +65,8 @@ public class mob03 : MonoBehaviour
             canMove = false;
             anim.SetBool("isAttack", true);
             Invoke("PlayerAttackOut", 1.0f);
+
+            player.GetComponent<player>().health--;
         }
     }
     private void PlayerAttackOut () {

@@ -164,8 +164,8 @@ public class WouldSystem : MonoBehaviour
             if(spawnIntTimer == 1 && !nightBool && systemDay == 3)  Instantiate(prefabBoss01, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
 
             if(mobCount <= 30){
-                if((spawnIntTimer % (spawnInterval_day0 + (systemDay * 2))) == 0 && !nightBool) Instantiate(prefabMob0, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
-                if((spawnIntTimer % (spawnInterval_day1 + (systemDay * 2))) == 0 && !nightBool) Instantiate(prefabMob1, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
+                if((spawnIntTimer % (spawnInterval_day0 + (systemDay * 3))) == 0 && !nightBool) Instantiate(prefabMob0, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
+                if((spawnIntTimer % (spawnInterval_day1 + (systemDay * 3))) == 0 && !nightBool) Instantiate(prefabMob1, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
                 if((spawnIntTimer % spawnInterval_day2) == 0 && !nightBool && systemDay >= 1)   Instantiate(prefabMob2, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
                 if((spawnIntTimer % spawnInterval_day3) == 0 && !nightBool && systemDay >= 2)   Instantiate(prefabMob3, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
                 //if((spawnIntTimer % spawnInterval_day4) == 0 && !nightBool) Instantiate(prefabMob1, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);

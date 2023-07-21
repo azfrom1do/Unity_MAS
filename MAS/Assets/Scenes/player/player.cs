@@ -317,6 +317,7 @@ public bool wallBack;
             //rigid.AddForce(Vector3.back * 20, ForceMode.Impulse);
             if(!immune){
                 health--;
+                if(col.gameObject.tag == "Mob_Skill") health--; 
                 Immune(getHit_Immune);
                 Invoke("PlayerHitOut", 0.3f);
 
