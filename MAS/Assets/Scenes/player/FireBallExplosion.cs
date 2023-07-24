@@ -37,7 +37,7 @@ public class FireBallExplosion : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider col) {
-        if(col.gameObject.tag == "Mob"){
+        if(col.gameObject.tag == "Mob" && maintainTimer <= 0.5f){
             if(col.gameObject.name == "Boss01(Clone)"){
                 col.GetComponent<Boss01>().getFireHit = true;
                 col.GetComponent<Boss01>().health -= 10;

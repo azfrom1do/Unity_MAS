@@ -24,9 +24,6 @@ public class Boss01 : MonoBehaviour
     public float skillCool;
     public bool isFlying = false;
     private bool FlyingBool = false;
-    private bool doFly = false;
-    private bool doIce = false;
-    private int iceLanceCount;
 
     void Awake()
     {
@@ -40,7 +37,6 @@ public class Boss01 : MonoBehaviour
 
         rigid = GetComponent<Rigidbody>();
         isFlying = false;
-        iceLanceCount = 0;
     }
 
     private void FixedUpdate()
@@ -214,7 +210,6 @@ public class Boss01 : MonoBehaviour
     //얼음Ice
     private void Scream () {
         mobSpeed = 0.1f;
-        doIce = true;
         skillCool = 0.0f;
         Invoke("TakeOff", 3.5f);
 

@@ -81,7 +81,7 @@ public class player : MonoBehaviour
     public int maxHealth;
     public int health;
     public float playerSpeed;
-    private bool doMove = false;
+    public bool doMove;
     
     public bool canAction;
     private bool canJump;
@@ -111,7 +111,8 @@ public class player : MonoBehaviour
     public float rotateSpeed;
     public Vector3 cameraRotate;
     private float currentCameraRotationX;
-public bool wallBack;
+    public bool wallBack;
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -240,7 +241,6 @@ public bool wallBack;
         score = (level-1) * 10;
         scoreText.text = 
             "Score = " + (score + killScore) + 
-            "\nDay = " + (level-1) + 
             "\nEXP = " + killScore + "/" + (15 + (level * 5));
     }
 
@@ -360,48 +360,47 @@ public bool wallBack;
 
     //회피
     private void Dodge(){
-        if(Input.GetMouseButton(1) && dodgeCool && canAction){
-            dodgeSpeed += 0.5f;
-            Debug.Log("회피");
-            canDodge = false;
-            dodgeCool = false;
-            Immune(0.3f);
-            Invoke("DodgeOut", 0.2f);
-            Invoke("DodgeReady", dodgeCT);
-
-            anim.SetBool("Dodge", true);
-            PlaySound("DODGE");
-        }
+        if(Input.GetMouseButton(1) && dodgeCool && canAction)
+            StartCoroutine(DodgeCRT());
     }
-    private void DodgeOut(){
+    IEnumerator DodgeCRT(){
+        yield return null;
+        dodgeSpeed += 0.5f;
+        Debug.Log("회피");
+        canDodge = false;
+        dodgeCool = false;
+        anim.SetBool("Dodge", true);
+        PlaySound("DODGE");
+        Immune(0.3f);
+
+        yield return new WaitForSeconds(0.2f);
         dodgeSpeed -= 0.5f;
         canDodge = true;
         anim.SetBool("Dodge", false);
-    }
-    private void DodgeReady(){
+
+        yield return new WaitForSeconds(dodgeCT);
         dodgeCool = true;
     }
 
     //평타
     void Attack(){
-        if(Input.GetMouseButton(0) && canAction){
-            weapon.GetComponent<weaponAttack>().doAttack = true;
-            Debug.Log("평타");
-            canAttack = false;
-            Invoke("AttackOut", 0.6f);
-            Invoke("AttackReady", 0.8f);
-
-            anim.SetBool("Attack", true);
-            PlaySound("SWING");
-        }
+        if(Input.GetMouseButton(0) && canAction && canAttack)
+            StartCoroutine(AttackCRT());
     }
-    void AttackOut(){
+    IEnumerator AttackCRT(){
+        yield return null;
+        canAttack = false;
+        weapon.GetComponent<weaponAttack>().doAttack = true;
+        Debug.Log("평타");
+        anim.SetBool("Attack", true);
+        PlaySound("SWING");
+
+        yield return new WaitForSeconds(0.6f);
         weapon.GetComponent<weaponAttack>().doAttack = false;
 
-        anim.SetBool("Attack", false);
-    }
-    private void AttackReady(){
+        yield return new WaitForSeconds(0.2f);
         canAttack = true;
+        anim.SetBool("Attack", false);
     }
 
     //피해면역
@@ -422,108 +421,77 @@ public bool wallBack;
 
         skillPoint++;
     }
-    private void SkillSelect () {
-        if(skillPoint > 0 && canSelect){
-            stat1_Icon.SetActive(true);
-            stat2_Icon.SetActive(true);
-            stat3_Icon.SetActive(true);
-            if(Input.GetKeyDown("1")) {
-                skillPoint--;
-                maxHealth++;
-                health++;
-                AD++;
-                Instantiate(statUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
-                
-                stat2_Icon.SetActive(false);
-                stat3_Icon.SetActive(false);
-                Invoke("SkillSelectOut", 1.0f);
-                Debug.Log("스텟 증가");
-            }
-            if(Input.GetKeyDown("2")) {
-                skillPoint--;
-                FB_Level++;
-                
-                FB_Icon.SetActive(true);    //스킬 획득시 아이콘 표시
-                stat1_Icon.SetActive(false);
-                stat3_Icon.SetActive(false);
-                Invoke("SkillSelectOut", 1.0f);
-                Debug.Log("화염구 강화");
-            }
-            if(Input.GetKeyDown("3")) {
-                skillPoint--;
+    IEnumerator SelectBoolCRT(){    //선택했다는 효과 코루틴
+        while (!Input.GetKeyDown("1") && !Input.GetKeyDown("2") && !Input.GetKeyDown("3"))
+            yield return null;
 
-                stat1_Icon.SetActive(false);
-                stat2_Icon.SetActive(false);
-                Invoke("SkillSelectOut", 1.0f);
-                Debug.Log("보상미정");
-            }
-            SelectBool ();
-        }
-    }
-    private void SkillSelectOut () {
-        stat1_Icon.SetActive(false);
-        stat2_Icon.SetActive(false);
-        stat3_Icon.SetActive(false);
-    }
-    private void SelectBool () {
-        if(canSelect){
-            if(Input.GetKeyDown("1")){
-                select1_Icon.SetActive(true);
-                canSelect = false;
-                Invoke("SelectBoolOut", 1.0f);
-            }
-            if(Input.GetKeyDown("2")){
-                select2_Icon.SetActive(true);
-                canSelect = false;
-                Invoke("SelectBoolOut", 1.0f);
-            }
-            if(Input.GetKeyDown("3")){
-                select3_Icon.SetActive(true);
-                canSelect = false;
-                Invoke("SelectBoolOut", 1.0f);
-            }
-        }
-    }
-    private void SelectBoolOut () {
-        canSelect = true;
+        if(Input.GetKeyDown("1"))
+            select1_Icon.SetActive(true);
+        if(Input.GetKeyDown("2"))
+            select2_Icon.SetActive(true);
+        if(Input.GetKeyDown("3"))
+            select3_Icon.SetActive(true);
+
+        yield return new WaitForSeconds(1.0f);
         select1_Icon.SetActive(false);
         select2_Icon.SetActive(false);
         select3_Icon.SetActive(false);
     }
 
-    //아이템
-    private void ItemSelect() {
-        if (itemPoint > 0 && skillPoint == 0 && canSelect) {
-            List<int> indexList = new List<int>() { 0, 1, 2, 3, 4 }; // 아이템 인덱스 후보 리스트
-
-            if(item_Array[0] == 0){
-                for (int i = 0; i < 3; i++){
-                    int randomIndex = Random.Range(0, indexList.Count); // 후보 리스트에서 무작위 인덱스 선택
-                    item_Array[i] = indexList[randomIndex]; // 선택된 인덱스를 결과 배열에 할당
-                    indexList.RemoveAt(randomIndex); // 이미 선택된 인덱스는 후보 리스트에서 제거
-
-                    Debug.Log(item_Array[i]);
-
-                    if(i == 0) item_GOlist[item_Array[i]].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-                    if(i == 1) item_GOlist[item_Array[i]].transform.position = new Vector3(stat2_Icon.transform.position.x, stat2_Icon.transform.position.y);
-                    if(i == 2) item_GOlist[item_Array[i]].transform.position = new Vector3(stat3_Icon.transform.position.x, stat3_Icon.transform.position.y);
-                    item_GOlist[item_Array[i]].SetActive(true);
-                }
-            }
-        
-            if(Input.GetKeyDown("1")) ItemList(item_Array[0]);
-            if(Input.GetKeyDown("2")) ItemList(item_Array[1]);
-            if(Input.GetKeyDown("3")) ItemList(item_Array[2]);
-
-            SelectBool ();
+    private void SkillSelect () {   //스킬 선택
+        if(skillPoint > 0 && canSelect){
+            StartCoroutine(SkillCRT());
+            StartCoroutine(SelectBoolCRT());    //선택 이펙트 코루틴
         }
-        
     }
-    private void ItemSelectIcon(int i, int k) {
-        i-=1;
-        item_GOlist[i].transform.position = new Vector3(item_GOlist[i].transform.position.x + (100 * k), 
-            item_GOlist[i].transform.position.y); item_GOlist[i].SetActive(true);
+    IEnumerator SkillCRT(){         //스킬 코루틴
+        canSelect = false;
+        stat1_Icon.SetActive(true);
+        stat2_Icon.SetActive(true);
+        stat3_Icon.SetActive(true);
+
+        // while (!Input.anyKeyDown)
+        //     yield return null;  //아무키 입력될때까지 대기
+
+        while (!Input.GetKeyDown("1") && !Input.GetKeyDown("2") && !Input.GetKeyDown("3"))
+            yield return null;
+
+        if(Input.GetKeyDown("1")) {
+            skillPoint--;
+            maxHealth++;
+            health++;
+            AD++;
+            Instantiate(statUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
+            
+            stat2_Icon.SetActive(false);
+            stat3_Icon.SetActive(false);
+            Debug.Log("스텟 증가");
+        }
+        if(Input.GetKeyDown("2")) {
+            skillPoint--;
+            FB_Level++;
+            
+            FB_Icon.SetActive(true);    //스킬 획득시 아이콘 표시
+            stat1_Icon.SetActive(false);
+            stat3_Icon.SetActive(false);
+            Debug.Log("화염구 강화");
+        }
+        if(Input.GetKeyDown("3")) {
+            skillPoint--;
+
+            stat1_Icon.SetActive(false);
+            stat2_Icon.SetActive(false);
+            Debug.Log("보상미정");
+        }
+
+        yield return new WaitForSeconds(1.0f);
+        stat1_Icon.SetActive(false);
+        stat2_Icon.SetActive(false);
+        stat3_Icon.SetActive(false);
+        canSelect = true;
     }
+
+    //아이템
     private void ItemList (int num) {
         Debug.Log(num+"호출");
         switch (num) {
@@ -591,24 +559,51 @@ public bool wallBack;
                 break;
         }
         itemPoint--;
-        Invoke("ItemListOut", 1.0f);
     }
     private void ItemListOut () {
-        item_GOlist[0].SetActive(false);
-        item_GOlist[1].SetActive(false);
-        item_GOlist[2].SetActive(false);
-        item_GOlist[3].SetActive(false);
-        item_GOlist[4].SetActive(false);
+        for(int i = 0; i < 5; i++){
+            item_GOlist[i].SetActive(false);
+            item_GOlist[i].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+        }
+
         // item_GOlist[item_Array[1]].transform.position = 
         //     new Vector3(item_GOlist[item_Array[1]].transform.position.x -100, item_GOlist[item_Array[1]].transform.position.y);
         // item_GOlist[item_Array[2]].transform.position = 
         //     new Vector3(item_GOlist[item_Array[2]].transform.position.x -200, item_GOlist[item_Array[2]].transform.position.y);
-        item_GOlist[0].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-        item_GOlist[1].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-        item_GOlist[2].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-        item_GOlist[3].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-        item_GOlist[4].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
-        item_Array[0] = 0;
+    }
+
+
+
+    private void ItemSelect() {
+        if (itemPoint > 0 && skillPoint == 0 && canSelect)
+            StartCoroutine(ItemCRT());
+    }
+    IEnumerator ItemCRT(){
+        canSelect = false;
+        List<int> indexList = new List<int>() { 0, 1, 2, 3, 4 }; // 아이템 인덱스 후보 리스트
+        for (int i = 0; i < 3; i++){
+            int randomIndex = Random.Range(0, indexList.Count); // 후보 리스트에서 무작위 인덱스 선택
+            item_Array[i] = indexList[randomIndex]; // 선택된 인덱스를 결과 배열에 할당
+            indexList.RemoveAt(randomIndex); // 이미 선택된 인덱스는 후보 리스트에서 제거
+
+            Debug.Log(item_Array[i]);
+
+            if(i == 0) item_GOlist[item_Array[i]].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
+            if(i == 1) item_GOlist[item_Array[i]].transform.position = new Vector3(stat2_Icon.transform.position.x, stat2_Icon.transform.position.y);
+            if(i == 2) item_GOlist[item_Array[i]].transform.position = new Vector3(stat3_Icon.transform.position.x, stat3_Icon.transform.position.y);
+            item_GOlist[item_Array[i]].SetActive(true);
+        }
+
+        while (!Input.GetKeyDown("1") && !Input.GetKeyDown("2") && !Input.GetKeyDown("3"))
+            yield return null;
+
+        if(Input.GetKeyDown("1")) ItemList(item_Array[0]);
+        if(Input.GetKeyDown("2")) ItemList(item_Array[1]);
+        if(Input.GetKeyDown("3")) ItemList(item_Array[2]);
+
+        yield return new WaitForSeconds(1.0f);
+        ItemListOut();
+        canSelect = true;
     }
     private void potion () {
         if(Input.GetKeyDown("q") && potionCount >= needPotion && health < maxHealth && canAction){
@@ -645,13 +640,11 @@ public bool wallBack;
 
         anim.SetBool("Shoting", false);
     }
-    //
-    
     
     //효과음
-    void PlaySound(string acton){
+    void PlaySound(string action){
         int randomInt = Random.Range(1, 4);
-        switch (acton) {
+        switch (action) {
             case "SWING":
                 if(randomInt == 1) audioSource.clip = audioSwing1;
                 if(randomInt >= 2) audioSource.clip = audioSwing2;

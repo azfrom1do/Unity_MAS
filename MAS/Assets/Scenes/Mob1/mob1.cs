@@ -89,7 +89,7 @@ public class mob1 : MonoBehaviour
         transform.LookAt(transform.position + direction * speed);   //이동 방향 바라보게
         if(getHit){
             transform.Translate(new Vector3(0, 0.005f, -0.12f), Space.Self);
-            Invoke("GetHit", 0.2f);
+            //Invoke("GetHit", 0.2f);
         }
         
 

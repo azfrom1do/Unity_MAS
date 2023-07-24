@@ -99,13 +99,24 @@ public class weaponAttack : MonoBehaviour
 
     //활성화
     public void Use(){
-        if(doAttack){
-            meleeArea.enabled = true;
-            trailEffect.enabled = true;
-        }else{
-            meleeArea.enabled = false;
-            trailEffect.enabled = false;
-        }
+        // if(doAttack){
+        //     meleeArea.enabled = true;
+        //     trailEffect.enabled = true;
+        // }else{
+        //     meleeArea.enabled = false;
+        //     trailEffect.enabled = false;
+        // }
+        if(doAttack)
+            StartCoroutine(UseCRT());
+    }
+    IEnumerator UseCRT(){
+        doAttack = false;
+        meleeArea.enabled = true;
+        trailEffect.enabled = true;
+
+        yield return new WaitForSeconds(0.5f);
+        meleeArea.enabled = false;
+        trailEffect.enabled = false;
     }
     
 

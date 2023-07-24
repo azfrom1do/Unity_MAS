@@ -3611,7 +3611,6 @@ MonoBehaviour:
   nightBGM: {fileID: 8300000, guid: fb9a3efe7da6a4b46b3a6f2c5cf2bd88, type: 3}
   sunLight: {fileID: 705507993}
   prefabPlayer: {fileID: 340184027}
-  camera: {fileID: 963194225}
   thisPlane: {fileID: 747755082}
   prefabMob0: {fileID: 7699364718720385884, guid: 623cb00530283574784a8fae0e8240a5, type: 3}
   prefabMob1: {fileID: 4106494115975661881, guid: 65d85fb499ef94c4684a0f10ab085076, type: 3}
@@ -6763,8 +6762,6 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'scoreText
 
-    dayText
-
     killScoreText'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9761,7 +9758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8829987775046802088, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8829987775046802089, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: m_Enabled
@@ -10003,6 +10000,14 @@ PrefabInstance:
       propertyPath: item_InvisiCloak_Icon
       value: 
       objectReference: {fileID: 2127018043}
+    - target: {fileID: 8829987775162635270, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: m_Height
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8829987775162635270, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: m_Center.y
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8829987775162635271, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: m_Mass
       value: 1
@@ -10090,6 +10095,10 @@ PrefabInstance:
     - target: {fileID: 8829987775360076580, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8829987775360076581, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
+      propertyPath: m_Time
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8829987775360076581, guid: fe338921efab1ff41b42a2eefc33fe88, type: 3}
       propertyPath: m_Enabled

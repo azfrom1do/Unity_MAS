@@ -17,7 +17,6 @@ public class WouldSystem : MonoBehaviour
 
     public GameObject sunLight;
     public GameObject prefabPlayer;
-    public GameObject camera;
     public GameObject thisPlane;
 
     public GameObject prefabMob0;   // 소환할 Prefab을 저장하는 변수
@@ -68,12 +67,12 @@ public class WouldSystem : MonoBehaviour
         //몹 스폰 간격
         spawnInterval_day0 = 5;     //노멀
         spawnInterval_day1 = 4;     //쾌속
-        spawnInterval_day2 = 13;     //돌진
+        spawnInterval_day2 = 13;    //돌진
         spawnInterval_day3 = 3;     //자폭
         spawnInterval_night0 = 4;   //노멀
         spawnInterval_night1 = 3;   //쾌속
         spawnInterval_night2 = 4;   //돌진
-        spawnInterval_night3 = 7;  //자폭
+        spawnInterval_night3 = 7;   //자폭
     }
 
     private void Awake(){
@@ -159,7 +158,7 @@ public class WouldSystem : MonoBehaviour
         if(randomVer >= 0) spawnVer = randomHor + prefabPlayer.transform.position.z + 20;
         else spawnVer = randomVer + prefabPlayer.transform.position.z - 20;
 
-        if(!canSpawn){
+        if(canSpawn){
             if(spawnIntTimer == 1 && !nightBool && systemDay != 0)  Instantiate(prefabBonus1, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
             if(spawnIntTimer == 1 && !nightBool && systemDay == 3)  Instantiate(prefabBoss01, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
 
