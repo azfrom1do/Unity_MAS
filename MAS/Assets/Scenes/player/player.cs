@@ -46,8 +46,11 @@ public class player : MonoBehaviour
     public GameObject weapon;
     public Animator anim;
     public Camera mainCamera;
+    public Image healthImag;
+    public Image expImag;
     public TextMeshProUGUI hearthText;
-    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI statText;
+    public TextMeshProUGUI levelText;
     public GameObject fireBall;
     public GameObject potionReady;
     public GameObject potionHeal;
@@ -56,6 +59,7 @@ public class player : MonoBehaviour
     public GameObject select2_Icon;
     public GameObject select3_Icon;
     public GameObject FB_Icon;
+    public Image FB_Imag;
     public GameObject stat1_Icon;
     public GameObject stat2_Icon;
     public GameObject stat3_Icon;
@@ -87,7 +91,7 @@ public class player : MonoBehaviour
     private bool canJump;
     public float jumpPower;
     private bool canDodge = true;
-    public bool dodgeCool = true;
+    public bool dodgeReady = true;
     private float dodgeSpeed;
     public float dodgeCT;
     private bool canAttack = true;
@@ -107,6 +111,8 @@ public class player : MonoBehaviour
     public int skillPoint;
     public int AD;
     public int FB_Level;
+    public float FB_CT;
+    public bool FB_Ready = true;
 
     public float rotateSpeed;
     public Vector3 cameraRotate;
@@ -129,6 +135,7 @@ public class player : MonoBehaviour
         health = maxHealth;     //체력
         playerSpeed = 10;     //이동속도
         jumpPower = 5;  //점프력
+        FB_CT = 15.0f;    //염구쿨
 
         //회피
         dodgeSpeed = 0; //회피속도
@@ -213,13 +220,18 @@ public class player : MonoBehaviour
 
     //스테이터스UI + 체력관리
     private void StatusCheck () {
-        //최대체력 설정 (레벨만큼 추가)
+        //최대체력 설정
         
+        //체력이미지
+        healthImag.fillAmount = (float)health / (float)maxHealth;
+
         hearthText.text = 
-            "Level : "+ level + 
-            "\nHealth (" + health + "/" + maxHealth + ")" + 
-            "\nAttack Damage : " + (1 + AD) + 
-            "\nPotion (" + potionCount + "/" + needPotion + ")";
+            health + "/" + maxHealth;
+        statText.text = 
+            "LV : "+ level + 
+            "\nAD: " + (1 + AD) + 
+            "\n " + potionCount + " / " + needPotion;
+
         if(health <= 0){
             hearthText.text = "GAME OVER";
         }
@@ -239,9 +251,12 @@ public class player : MonoBehaviour
     //시스템UI
     private void systemCheck () {
         score = (level-1) * 10;
-        scoreText.text = 
-            "Score = " + (score + killScore) + 
-            "\nEXP = " + killScore + "/" + (15 + (level * 5));
+        levelText.text = 
+            // "Score = " + (score + killScore) + 
+            killScore + "/" + (15 + (level * 5));
+
+        //경험치이미지
+        expImag.fillAmount = (float)killScore / (float)(15 + (level * 5));
     }
 
     //이동
@@ -360,7 +375,7 @@ public class player : MonoBehaviour
 
     //회피
     private void Dodge(){
-        if(Input.GetMouseButton(1) && dodgeCool && canAction)
+        if(Input.GetMouseButton(1) && dodgeReady && canAction)
             StartCoroutine(DodgeCRT());
     }
     IEnumerator DodgeCRT(){
@@ -368,7 +383,7 @@ public class player : MonoBehaviour
         dodgeSpeed += 0.5f;
         Debug.Log("회피");
         canDodge = false;
-        dodgeCool = false;
+        dodgeReady = false;
         anim.SetBool("Dodge", true);
         PlaySound("DODGE");
         Immune(0.3f);
@@ -379,7 +394,7 @@ public class player : MonoBehaviour
         anim.SetBool("Dodge", false);
 
         yield return new WaitForSeconds(dodgeCT);
-        dodgeCool = true;
+        dodgeReady = true;
     }
 
     //평타
@@ -624,21 +639,39 @@ public class player : MonoBehaviour
     }
 
     //스킬
+    //쿨타임
+    IEnumerator CoolTimeCRT(Image img, float cool)
+    {
+        print("쿨타임 코루틴 실행");
+
+        float tempTime=0;
+ 
+        while (tempTime <= cool) {
+            tempTime += Time.deltaTime;
+            img.fillAmount = tempTime/cool;
+            yield return new WaitForFixedUpdate();
+        }
+        
+        print("쿨타임 코루틴 완료");
+    }
     //화염구
     private void FireBall () {
-        //moveDirection
-        if(Input.GetKeyDown("e") && FB_Level > 0 && canAction){
-            canSkill = false;
-            Instantiate(fireBall, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
-            Invoke("FireBallOut", 0.3f);
-
-            anim.SetBool("Shoting", true);
-        }
+        if(Input.GetKeyDown("e") && FB_Level > 0 && FB_Ready && canAction)
+            StartCoroutine (FireBallCRT());
     }
-    private void FireBallOut () {
-        canSkill = true;
+    IEnumerator FireBallCRT() {
+        canSkill = false;
+        FB_Ready = false;
+        Instantiate(fireBall, this.transform.position + new Vector3(0, 3, 0), this.transform.rotation);
+        StartCoroutine (CoolTimeCRT(FB_Imag, FB_CT));
+        anim.SetBool("Shoting", true);
 
+        yield return new WaitForSeconds(0.3f);
+        canSkill = true;
         anim.SetBool("Shoting", false);
+
+        yield return new WaitForSeconds(FB_CT);
+        FB_Ready = true;
     }
     
     //효과음
