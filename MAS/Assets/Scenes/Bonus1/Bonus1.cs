@@ -23,7 +23,7 @@ public class Bonus1 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         health = 3;
-        mobSpeed = 8.0f;
+        mobSpeed = 6.0f;
     }
 
     private void FixedUpdate()
@@ -40,7 +40,7 @@ public class Bonus1 : MonoBehaviour
         if(getHit){
             mobSpeed = 20;
             anim.SetBool("isHit", true);
-            Invoke("GetHitOut", 0.3f);
+            Invoke("GetHitOut", 0.5f);
         }
         if(health <= 0){
             health = 1;
@@ -51,7 +51,7 @@ public class Bonus1 : MonoBehaviour
     }
     private void GetHitOut () {
         getHit=false;
-        mobSpeed = 8.0f;
+        mobSpeed = 6.0f;
         anim.SetBool("isHit", false);
     }
 

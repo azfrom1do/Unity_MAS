@@ -25,8 +25,8 @@ public class mob03 : MonoBehaviour
         planeSpawn = GameObject.FindWithTag("Floor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
-        health = 50;
-        mobSpeed = 3.0f;
+        health = 40;
+        mobSpeed = 7.0f;
         canMove = true;
     }
 
@@ -84,7 +84,7 @@ public class mob03 : MonoBehaviour
 
         // 몬스터의 이동
         float speed = mobSpeed * Time.deltaTime;
-        if(canMove) transform.position += direction * speed;
+        if(canMove && !getHit) transform.position += direction * speed;
 
         transform.LookAt(transform.position + direction * speed);   //이동 방향 바라보게
         if(getHit){

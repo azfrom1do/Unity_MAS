@@ -4,40 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class Item_EXPpotion{
-    private string name;
-    private int number;
-
-    public Item_EXPpotion(){
-        name = "";
-        number = 0;
-    }
-    public Item_EXPpotion(string str, int num){
-        name = str;
-        number = num;
-    }
-
-    public string getName(){
-        return name;
-    }
-}
-public class Item_List{
-    public Item_EXPpotion[] list = new Item_EXPpotion[5];
-
-    public Item_List(){
-        list[0] = new Item_EXPpotion("테스트아이템", 0);
-        list[1] = new Item_EXPpotion("경험치포션", 1);
-        list[2] = new Item_EXPpotion("생고기", 2);
-        list[3] = new Item_EXPpotion("녹슨갑옷", 3);
-        list[4] = new Item_EXPpotion("조제도구", 4);
-        list[5] = new Item_EXPpotion("은화", 5);
-    }
-
-    public string getItemName(int n){
-        return list[n].getName();
-    }
-}
-
 public class player : MonoBehaviour
 {
     Rigidbody rigid;
@@ -70,6 +36,8 @@ public class player : MonoBehaviour
     public GameObject item_RustyArmor_Icon;     //아이콘 녹슨갑옷
     public GameObject item_PotionTool_Icon;     //아이콘 생고기
     public GameObject item_InvisiCloak_Icon;    //아이콘 생고기
+    public GameObject item_Shield_Icon;         //아이콘 방패
+    public GameObject item_MagicBoots_Icon;     //아이콘 마법부츠
 
     AudioSource audioSource;
     public AudioClip audioSwing1;
@@ -94,6 +62,7 @@ public class player : MonoBehaviour
     public bool dodgeReady = true;
     private float dodgeSpeed;
     public float dodgeCT;
+    public float dodge_Immune;
     private bool canAttack = true;
     public bool immune = false;
     public float getHit_Immune;
@@ -140,6 +109,7 @@ public class player : MonoBehaviour
         //회피
         dodgeSpeed = 0; //회피속도
         dodgeCT = 2;    //쿨타임
+        dodge_Immune = 0.3f;
 
         //오디오소스 호출
         audioSource = GetComponent<AudioSource>();
@@ -151,7 +121,9 @@ public class player : MonoBehaviour
             item_RawMeat_Icon,
             item_RustyArmor_Icon,
             item_PotionTool_Icon,
-            item_InvisiCloak_Icon
+            item_InvisiCloak_Icon,
+            item_Shield_Icon,
+            item_MagicBoots_Icon
         };
         potionCount = 5;
         needPotion = 5;
@@ -218,7 +190,7 @@ public class player : MonoBehaviour
 
 
 
-    //스테이터스UI + 체력관리
+//스테이터스UI + 체력관리
     private void StatusCheck () {
         //최대체력 설정
         
@@ -248,7 +220,7 @@ public class player : MonoBehaviour
         //무기공격력에 레벨만큼 추가
         weapon.GetComponent<weaponAttack>().damage = (AD + 1);
     }
-    //시스템UI
+//시스템UI
     private void systemCheck () {
         score = (level-1) * 10;
         levelText.text = 
@@ -259,7 +231,7 @@ public class player : MonoBehaviour
         expImag.fillAmount = (float)killScore / (float)(15 + (level * 5));
     }
 
-    //이동
+//이동
     private void Moving() {
         float speed = playerSpeed * Time.deltaTime + dodgeSpeed;
         float h = Input.GetAxisRaw("Horizontal");
@@ -325,7 +297,7 @@ public class player : MonoBehaviour
         else wallBack = false;
     }
     
-    //피격
+//피격
     private void PlayerHit (Collision col) {
         if(col.gameObject.tag == "Mob" || col.gameObject.tag == "Mob_Skill"){
             //planeSpawn.GetComponent<spawn>().mobCount--;
@@ -358,7 +330,7 @@ public class player : MonoBehaviour
         }
     }
 
-    //점프
+//점프
     private void Jump(){
         if(Input.GetKey(KeyCode.Space) && canAction){
             rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
@@ -373,20 +345,21 @@ public class player : MonoBehaviour
         }
     }
 
-    //회피
+//회피
     private void Dodge(){
-        if(Input.GetMouseButton(1) && dodgeReady && canAction)
+        if(Input.GetMouseButton(1) && dodgeReady && canAction){
+            StopCoroutine(DodgeCRT());
             StartCoroutine(DodgeCRT());
+        }
     }
     IEnumerator DodgeCRT(){
-        yield return null;
+        dodgeReady = false;
+        canDodge = false;
         dodgeSpeed += 0.5f;
         Debug.Log("회피");
-        canDodge = false;
-        dodgeReady = false;
         anim.SetBool("Dodge", true);
         PlaySound("DODGE");
-        Immune(0.3f);
+        Immune(dodge_Immune);
 
         yield return new WaitForSeconds(0.2f);
         dodgeSpeed -= 0.5f;
@@ -397,7 +370,7 @@ public class player : MonoBehaviour
         dodgeReady = true;
     }
 
-    //평타
+//평타
     void Attack(){
         if(Input.GetMouseButton(0) && canAction && canAttack)
             StartCoroutine(AttackCRT());
@@ -418,7 +391,7 @@ public class player : MonoBehaviour
         anim.SetBool("Attack", false);
     }
 
-    //피해면역
+//피해면역
     private void Immune (float timer) {
         if(!immune) {
             immune = true;
@@ -429,7 +402,7 @@ public class player : MonoBehaviour
         immune = false;
     }
 
-    //레벨
+//레벨
     public void LevelUp () {
         level++;
         Instantiate(levelUp, this.transform.position + new Vector3(0, 1, 0), this.transform.rotation);
@@ -506,7 +479,7 @@ public class player : MonoBehaviour
         canSelect = true;
     }
 
-    //아이템
+//아이템
     private void ItemList (int num) {
         Debug.Log(num+"호출");
         switch (num) {
@@ -517,10 +490,6 @@ public class player : MonoBehaviour
                 Invoke("LevelUp", 0.3f);
                 
                 Debug.Log("경험치포션 선택");
-                item_GOlist[1].SetActive(false);
-                item_GOlist[2].SetActive(false);
-                item_GOlist[3].SetActive(false);
-                item_GOlist[4].SetActive(false);
                 break;
             case 1:
                 //생고기
@@ -530,23 +499,13 @@ public class player : MonoBehaviour
                 health = maxHealth;
 
                 Debug.Log("생고기 선택");
-                item_GOlist[0].SetActive(false);
-                item_GOlist[2].SetActive(false);
-                item_GOlist[3].SetActive(false);
-                item_GOlist[4].SetActive(false);
                 break;
             case 2:
                 //녹슨갑옷
-                //최대체력+5
-                //10초 무적
-                maxHealth += 5;
-                Immune(10.0f);
+                //최대체력+10
+                maxHealth += 10;
 
                 Debug.Log("녹슨갑옷 선택");
-                item_GOlist[0].SetActive(false);
-                item_GOlist[1].SetActive(false);
-                item_GOlist[3].SetActive(false);
-                item_GOlist[4].SetActive(false);
                 break;
             case 3:
                 //조제도구
@@ -554,10 +513,6 @@ public class player : MonoBehaviour
                 if(needPotion > 1) needPotion -= 1;
 
                 Debug.Log("조제도구 선택");
-                item_GOlist[0].SetActive(false);
-                item_GOlist[1].SetActive(false);
-                item_GOlist[2].SetActive(false);
-                item_GOlist[4].SetActive(false);
                 break;
             case 4:
                 //투명망토 
@@ -565,37 +520,45 @@ public class player : MonoBehaviour
                 getHit_Immune += 1.0f;
 
                 Debug.Log("투명망토  선택");
-                item_GOlist[0].SetActive(false);
-                item_GOlist[1].SetActive(false);
-                item_GOlist[2].SetActive(false);
-                item_GOlist[3].SetActive(false);
+                break;
+            case 5:
+                //방패
+                //회피시전후 2초간 무적
+                dodge_Immune += 1.7f;
+
+                Debug.Log("방패  선택");
+                break;
+            case 6:
+                //마법부츠 
+                //회피쿨 1감소
+                dodgeCT -= 1.0f;
+
+                Debug.Log("마법부츠  선택");
                 break;
             default :
                 break;
         }
+        for(int i = 0; i < item_GOlist.Length; i++){
+            if(i == num) continue;
+            item_GOlist[i].SetActive(false);
+        }
         itemPoint--;
     }
     private void ItemListOut () {
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < item_GOlist.Length; i++){
             item_GOlist[i].SetActive(false);
             item_GOlist[i].transform.position = new Vector3(stat1_Icon.transform.position.x, stat1_Icon.transform.position.y);
         }
-
-        // item_GOlist[item_Array[1]].transform.position = 
-        //     new Vector3(item_GOlist[item_Array[1]].transform.position.x -100, item_GOlist[item_Array[1]].transform.position.y);
-        // item_GOlist[item_Array[2]].transform.position = 
-        //     new Vector3(item_GOlist[item_Array[2]].transform.position.x -200, item_GOlist[item_Array[2]].transform.position.y);
     }
-
-
 
     private void ItemSelect() {
         if (itemPoint > 0 && skillPoint == 0 && canSelect)
             StartCoroutine(ItemCRT());
+            StartCoroutine(SelectBoolCRT());    //선택 이펙트 코루틴
     }
     IEnumerator ItemCRT(){
         canSelect = false;
-        List<int> indexList = new List<int>() { 0, 1, 2, 3, 4 }; // 아이템 인덱스 후보 리스트
+        List<int> indexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6}; // 아이템 인덱스 후보 리스트
         for (int i = 0; i < 3; i++){
             int randomIndex = Random.Range(0, indexList.Count); // 후보 리스트에서 무작위 인덱스 선택
             item_Array[i] = indexList[randomIndex]; // 선택된 인덱스를 결과 배열에 할당
@@ -638,8 +601,8 @@ public class player : MonoBehaviour
         anim.SetBool("Potion", false);
     }
 
-    //스킬
-    //쿨타임
+//스킬
+//쿨타임
     IEnumerator CoolTimeCRT(Image img, float cool)
     {
         print("쿨타임 코루틴 실행");
@@ -654,7 +617,7 @@ public class player : MonoBehaviour
         
         print("쿨타임 코루틴 완료");
     }
-    //화염구
+//화염구
     private void FireBall () {
         if(Input.GetKeyDown("e") && FB_Level > 0 && FB_Ready && canAction)
             StartCoroutine (FireBallCRT());
@@ -674,7 +637,7 @@ public class player : MonoBehaviour
         FB_Ready = true;
     }
     
-    //효과음
+//효과음
     void PlaySound(string action){
         int randomInt = Random.Range(1, 4);
         switch (action) {

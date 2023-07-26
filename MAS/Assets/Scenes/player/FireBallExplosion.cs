@@ -14,13 +14,14 @@ public class FireBallExplosion : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindWithTag("Player");
-        damage = 5;
-        if(player.GetComponent<player>().FB_Level >= 2) damage += player.GetComponent<player>().level;
+        damage = 2;
+        damage += (player.GetComponent<player>().FB_Level * 4);
         maintain = 1.5f;
         
         Debug.Log(player.GetComponent<player>().FB_Level + "레벨 염구 폭발");
 
 
+        //player.GetComponent<player>().level;
         //audioSource.Play();
     }
 
