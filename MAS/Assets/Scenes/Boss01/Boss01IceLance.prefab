@@ -14529,7 +14529,7 @@ GameObject:
   - component: {fileID: 5033429535718243582}
   - component: {fileID: 5833450916145851578}
   m_Layer: 0
-  m_Name: IceLance
+  m_Name: Boss01IceLance
   m_TagString: Mob
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

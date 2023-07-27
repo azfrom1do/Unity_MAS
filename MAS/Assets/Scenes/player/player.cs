@@ -18,6 +18,7 @@ public class player : MonoBehaviour
     public TextMeshProUGUI statText;
     public TextMeshProUGUI levelText;
     public GameObject fireBall;
+    public GameObject iceLance;
     public GameObject potionReady;
     public GameObject potionHeal;
     public GameObject levelUp;
@@ -26,6 +27,8 @@ public class player : MonoBehaviour
     public GameObject select3_Icon;
     public GameObject FB_Icon;
     public Image FB_Imag;
+    public GameObject IL_Icon;
+    public Image IL_Imag;
     public GameObject stat1_Icon;
     public GameObject stat2_Icon;
     public GameObject stat3_Icon;
@@ -82,6 +85,9 @@ public class player : MonoBehaviour
     public int FB_Level;
     public float FB_CT;
     public bool FB_Ready = true;
+    public int IL_Level;
+    public float IL_CT;
+    public bool IL_Ready = true;
 
     public float rotateSpeed;
     public Vector3 cameraRotate;
@@ -105,6 +111,7 @@ public class player : MonoBehaviour
         playerSpeed = 10;     //이동속도
         jumpPower = 5;  //점프력
         FB_CT = 15.0f;    //염구쿨
+        IL_CT = 5.0f;    //염구쿨
 
         //회피
         dodgeSpeed = 0; //회피속도
@@ -175,6 +182,7 @@ public class player : MonoBehaviour
         //스킬
         potion ();      //포션
         FireBall();     //화염구
+        IceLance();     //화염구
 
         //선택
         SkillSelect();  //스킬선택
@@ -466,7 +474,9 @@ public class player : MonoBehaviour
         }
         if(Input.GetKeyDown("3")) {
             skillPoint--;
-
+            IL_Level++;
+            
+            IL_Icon.SetActive(true);    //스킬 획득시 아이콘 표시
             stat1_Icon.SetActive(false);
             stat2_Icon.SetActive(false);
             Debug.Log("보상미정");
@@ -636,6 +646,28 @@ public class player : MonoBehaviour
         yield return new WaitForSeconds(FB_CT);
         FB_Ready = true;
     }
+//얼음창
+    private void IceLance () {
+        if(Input.GetKeyDown("r") && IL_Level > 0 && IL_Ready && canAction)
+            StartCoroutine (IceLanceCRT());
+    }
+    IEnumerator IceLanceCRT() {
+        canSkill = false;
+        IL_Ready = false;
+        for(int i = 0; i < 24; i++){
+            Instantiate(iceLance, this.transform.position + new Vector3(0, 2.0f, 0), this.transform.rotation * Quaternion.Euler(0, i * 15, 0));
+            //yield return new WaitForFixedUpdate();
+        }
+        StartCoroutine (CoolTimeCRT(IL_Imag, IL_CT));
+        anim.SetBool("Shoting", true);
+
+        yield return new WaitForSeconds(0.3f);
+        canSkill = true;
+        anim.SetBool("Shoting", false);
+
+        yield return new WaitForSeconds(IL_CT);
+        IL_Ready = true;
+    }
     
 //효과음
     void PlaySound(string action){
@@ -654,6 +686,9 @@ public class player : MonoBehaviour
                 if(randomInt == 3) audioSource.clip = audioHit3;
                 break;
             case "FIREBALL":
+                audioSource.clip = audioSwing1;
+                break;
+            case "ICELANCE":
                 audioSource.clip = audioSwing1;
                 break;
             default :

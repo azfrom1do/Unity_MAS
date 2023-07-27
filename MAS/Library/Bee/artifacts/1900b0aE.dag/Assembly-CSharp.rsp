@@ -407,6 +407,7 @@
 "Assets/Scenes/player/FireBallExplosion.cs"
 "Assets/Scenes/player/Heal.cs"
 "Assets/Scenes/player/HealReady.cs"
+"Assets/Scenes/player/IceLance.cs"
 "Assets/Scenes/player/LevelUp.cs"
 "Assets/Scenes/player/player.cs"
 "Assets/Scenes/player/StatUp.cs"
