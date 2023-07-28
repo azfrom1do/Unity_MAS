@@ -41,6 +41,8 @@ public class player : MonoBehaviour
     public GameObject item_InvisiCloak_Icon;    //아이콘 생고기
     public GameObject item_Shield_Icon;         //아이콘 방패
     public GameObject item_MagicBoots_Icon;     //아이콘 마법부츠
+    public GameObject item_Skull_Icon;          //아이콘 해골
+    public GameObject item_Gloves_Icon;       //아이콘 팔찌
 
     AudioSource audioSource;
     public AudioClip audioSwing1;
@@ -110,8 +112,8 @@ public class player : MonoBehaviour
         health = maxHealth;     //체력
         playerSpeed = 10;     //이동속도
         jumpPower = 5;  //점프력
-        FB_CT = 15.0f;    //염구쿨
-        IL_CT = 5.0f;    //염구쿨
+        FB_CT = 16.0f;    //염구쿨
+        IL_CT = 12.0f;    //염구쿨
 
         //회피
         dodgeSpeed = 0; //회피속도
@@ -130,7 +132,9 @@ public class player : MonoBehaviour
             item_PotionTool_Icon,
             item_InvisiCloak_Icon,
             item_Shield_Icon,
-            item_MagicBoots_Icon
+            item_MagicBoots_Icon,
+            item_Skull_Icon,
+            item_Gloves_Icon
         };
         potionCount = 5;
         needPotion = 5;
@@ -545,6 +549,28 @@ public class player : MonoBehaviour
 
                 Debug.Log("마법부츠  선택");
                 break;
+            case 7:
+                //해골 
+                //최대체력 -2
+                //공격력 + 2
+                
+                maxHealth -= 2;
+                if(health > maxHealth) health = maxHealth;
+                
+                AD += 2;
+
+                Debug.Log("해골  선택");
+                break;
+            case 8:
+                //장갑 
+                //스킬쿨감
+                //화염구 -8
+                //얼음창 -6
+                FB_CT -= 8.0f;    //염구쿨감
+                IL_CT -= 6.0f;    //얼창쿨감
+
+                Debug.Log("팔찌  선택");
+                break;
             default :
                 break;
         }
@@ -568,7 +594,7 @@ public class player : MonoBehaviour
     }
     IEnumerator ItemCRT(){
         canSelect = false;
-        List<int> indexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6}; // 아이템 인덱스 후보 리스트
+        List<int> indexList = new List<int>() { 0, 1, 2, 3, 4, 5, 6, 7, 8}; // 아이템 인덱스 후보 리스트
         for (int i = 0; i < 3; i++){
             int randomIndex = Random.Range(0, indexList.Count); // 후보 리스트에서 무작위 인덱스 선택
             item_Array[i] = indexList[randomIndex]; // 선택된 인덱스를 결과 배열에 할당

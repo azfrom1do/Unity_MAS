@@ -79,7 +79,7 @@ public class WouldSystem : MonoBehaviour
         //Instantiate(prefabBonus1, new Vector3(0, 1.5f, -20), Quaternion.identity);
         //Instantiate(prefabBoss01, new Vector3(0, 1.5f, -20), Quaternion.identity);
         //Instantiate(prefabExecut, new Vector3(0, 1.5f, -20), Quaternion.identity);
-        Instantiate(prefabMob0, new Vector3(0, 1.5f, -20), Quaternion.identity);
+        //Instantiate(prefabMob0, new Vector3(0, 1.5f, -20), Quaternion.identity);
     }
     void Update()
     {
