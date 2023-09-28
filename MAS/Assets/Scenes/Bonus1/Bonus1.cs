@@ -20,7 +20,7 @@ public class Bonus1 : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindWithTag("Player");
-        planeSpawn = GameObject.FindWithTag("Floor");
+        planeSpawn = GameObject.FindWithTag("MainFloor");
         anim = GetComponentInChildren<Animator>();
         health = 3;
         mobSpeed = 6.0f;

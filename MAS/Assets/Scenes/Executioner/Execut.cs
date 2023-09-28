@@ -20,7 +20,7 @@ public class Execut : MonoBehaviour
     void Awake()
     {
         player = GameObject.FindWithTag("Player");
-        planeSpawn = GameObject.FindWithTag("Floor");
+        planeSpawn = GameObject.FindWithTag("MainFloor");
         anim = GetComponentInChildren<Animator>();
         planeSpawn.GetComponent<WouldSystem>().mobCount++;
         health = 200;

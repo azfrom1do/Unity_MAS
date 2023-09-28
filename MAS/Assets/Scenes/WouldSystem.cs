@@ -158,7 +158,7 @@ public class WouldSystem : MonoBehaviour
         if(randomVer >= 0) spawnVer = randomHor + prefabPlayer.transform.position.z + 20;
         else spawnVer = randomVer + prefabPlayer.transform.position.z - 20;
 
-        if(!canSpawn){
+        if(canSpawn){
             if(spawnIntTimer == 1 && !nightBool && systemDay != 0)  Instantiate(prefabBonus1, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
             if(spawnIntTimer == 1 && !nightBool && systemDay == 3)  Instantiate(prefabBoss01, new Vector3(spawnHor, 1.5f, spawnVer), Quaternion.identity);
 
